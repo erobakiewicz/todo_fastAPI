@@ -19,3 +19,6 @@ extras = [ "standard",]
 
 [packages.passlib]
 extras = [ "bcrypt",]
+
+[packages.python-jose]
+extras = [ "cryptography",]

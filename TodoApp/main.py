@@ -83,5 +83,6 @@ async def delete_todo(todo_id: int, db: Session = Depends(get_db)):
 def successful_response(status_code: int):
     return {'status': status_code, 'transaction': 'Successful'}
 
+
 def http_exception():
     return HTTPException(status_code=404, detail="Item not found")

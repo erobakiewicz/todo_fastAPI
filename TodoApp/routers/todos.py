@@ -1,10 +1,15 @@
 import sys
-
 sys.path.append("..")
 
-from fastapi import APIRouter, Request
+from starlette import status
+from starlette.responses import RedirectResponse
+
+from fastapi import Depends, APIRouter, Request, Form
 import models
 from database import engine, SessionLocal
+from sqlalchemy.orm import Session
+from .auth import get_current_user
+
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
@@ -24,8 +29,11 @@ def get_db():
 
 
 @router.get("/", response_class=HTMLResponse)
-async def read_all_by_user(request: Request):
-    return templates.TemplateResponse("home.html", {"request": request})
+async def read_all_by_user(request: Request, db: Session = Depends(get_db)):
+
+    todos = db.query(models.Todos).filter(models.Todos.owner_id == 1).all()
+
+    return templates.TemplateResponse("home.html", {"request": request, "todos": todos})
 
 
 @router.get("/add-todo", response_class=HTMLResponse)

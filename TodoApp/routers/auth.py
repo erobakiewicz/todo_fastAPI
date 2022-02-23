@@ -87,13 +87,16 @@ def create_access_token(username: str, user_id: int, expires_delta: Optional[tim
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
-async def get_current_user(token: str = Depends(oauth2_bearer)):
+async def get_current_user(request: Request):
     try:
+        token = request.cookies.get("access_token")
+        if not token:
+            return None
         payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
         username: str = payload.get("sub")
         user_id: int = payload.get("id")
         if not username or not user_id:
-            raise get_user_exception()
+            return None
         return {"username": username, "id": user_id}
     except JWTError:
         raise get_user_exception()
@@ -150,6 +153,14 @@ async def login(request: Request, db: Session = Depends(get_db)):
     except HTTPException:
         msg = "Unknown Error"
         return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
+
+
+@router.get("/logout")
+async def logout(request: Request):
+    msg = "Logout Successful"
+    response = templates.TemplateResponse("login.html", {"request": request, "msg": msg})
+    response.delete_cookie(key="access_key")
+    return response
 
 
 @router.get("/register", response_class=HTMLResponse)

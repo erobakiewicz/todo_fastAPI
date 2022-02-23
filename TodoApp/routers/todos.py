@@ -9,7 +9,6 @@ from fastapi import Depends, APIRouter, Request, Form
 import models
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
-from .auth import get_current_user
 
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -101,4 +100,3 @@ async def complete_todo(request: Request, todo_id: int, db: Session = Depends(ge
     db.commit()
 
     return RedirectResponse(url="/todos", status_code=status.HTTP_302_FOUND)
-

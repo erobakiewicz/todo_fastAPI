@@ -1,27 +1,22 @@
-import sys
-
 from starlette.responses import RedirectResponse
 
-sys.path.append("..")
+from TodoApp import models
+from TodoApp.database import engine, SessionLocal
 
 from fastapi import Depends, HTTPException, status, APIRouter, Request, Response, Form
-from pydantic import BaseModel
 from typing import Optional
-import models
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
-from database import SessionLocal, engine
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="TodoApp/templates")
 
 SECRET_KEY = 'kD(}ocQ*Lwc?{"^z/R0^Q?HK}B5JL~h!Et7P1?kOcYnqo~$YjUFo.GBgm.7e?SQ'
 ALGORITHM = 'HS256'
-
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
@@ -147,9 +142,16 @@ async def register(request: Request):
 
 
 @router.post("/register", response_class=HTMLResponse)
-async def register_user(request: Request, email: str = Form(...), username: str = Form(...), firstname: str = Form(...),
-                        lastname: str = Form(...), password: str = Form(...), password2: str = Form(...),
-                        db: Session = Depends(get_db)):
+async def register_user(
+        request: Request,
+        email: str = Form(...),
+        username: str = Form(...),
+        firstname: str = Form(...),
+        lastname: str = Form(...),
+        password: str = Form(...),
+        password2: str = Form(...),
+        db: Session = Depends(get_db)
+):
     validation1 = db.query(models.Users).filter(models.Users.username == username).first()
     validation2 = db.query(models.Users).filter(models.Users.email == email).first()
 

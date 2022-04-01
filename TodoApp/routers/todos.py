@@ -1,25 +1,19 @@
-import sys
-
-from TodoApp.routers.auth import get_current_user
-
-sys.path.append("..")
-
+from fastapi import Depends, APIRouter, Request, Form
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from sqlalchemy.orm import Session
 from starlette import status
 from starlette.responses import RedirectResponse
 
-from fastapi import Depends, APIRouter, Request, Form
-import models
-from database import engine, SessionLocal
-from sqlalchemy.orm import Session
-
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
+from TodoApp import models
+from TodoApp.database import engine, SessionLocal
+from TodoApp.routers.auth import get_current_user
 
 router = APIRouter(prefix='/todos', tags=['todos'], responses={404: {"description": "Not found"}})
 
 models.Base.metadata.create_all(bind=engine)
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="TodoApp/templates")
 
 
 def get_db():
@@ -50,8 +44,12 @@ async def add_new_todo(request: Request):
 
 
 @router.post("/add-todo", response_class=HTMLResponse)
-async def create_todo(request: Request, title: str = Form(...), description: str = Form(...), priority: int = Form(...),
-                      db: Session = Depends(get_db)):
+async def create_todo(request: Request,
+                      title: str = Form(...),
+                      description: str = Form(...),
+                      priority: int = Form(...),
+                      db: Session = Depends(get_db)
+                      ):
     user = await get_current_user(request)
     if not user:
         return RedirectResponse(url="/auth", status_code=status.HTTP_302_FOUND)

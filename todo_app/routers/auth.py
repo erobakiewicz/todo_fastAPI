@@ -1,7 +1,9 @@
+import os
+
 from starlette.responses import RedirectResponse
 
-from TodoApp import models
-from TodoApp.database import engine, SessionLocal
+import models
+from database import engine, SessionLocal
 
 from fastapi import Depends, HTTPException, status, APIRouter, Request, Response, Form
 from typing import Optional
@@ -13,9 +15,9 @@ from jose import jwt, JWTError
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-templates = Jinja2Templates(directory="TodoApp/templates")
+templates = Jinja2Templates(directory="templates")
 
-SECRET_KEY = 'kD(}ocQ*Lwc?{"^z/R0^Q?HK}B5JL~h!Et7P1?kOcYnqo~$YjUFo.GBgm.7e?SQ'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 ALGORITHM = 'HS256'
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')

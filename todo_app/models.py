@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
-from TodoApp.database import Base
+from database import Base
 
 
 class Users(Base):

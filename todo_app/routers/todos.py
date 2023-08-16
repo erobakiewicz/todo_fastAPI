@@ -5,15 +5,15 @@ from sqlalchemy.orm import Session
 from starlette import status
 from starlette.responses import RedirectResponse
 
-from TodoApp import models
-from TodoApp.database import engine, SessionLocal
-from TodoApp.routers.auth import get_current_user
+import models
+from database import engine, SessionLocal
+from routers.auth import get_current_user
 
 router = APIRouter(prefix='/todos', tags=['todos'], responses={404: {"description": "Not found"}})
 
 models.Base.metadata.create_all(bind=engine)
 
-templates = Jinja2Templates(directory="TodoApp/templates")
+templates = Jinja2Templates(directory="templates")
 
 
 def get_db():
